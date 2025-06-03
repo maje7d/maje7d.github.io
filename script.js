@@ -13,7 +13,26 @@ self.addEventListener('install', function(event) {
       })
   );
 });
+const CACHE_NAME = 'speed-bypass-v1';
+const ASSETS = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/script.js',
+  '/speed-icon-illustration-free-vector.jpg'
+];
 
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(ASSETS))
+});
+
+self.addEventListener('fetch', (e) => {
+  e.respondWith(
+    caches.match(e.request)
+      .then(response => response || fetch(e.request))
+});
 self.addEventListener('fetch', function(event) {
   event.respondWith(
     caches.match(event.request)
